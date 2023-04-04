@@ -2,7 +2,7 @@ package users
 
 import (
 	"context"
-	"db-go/entities"
+	"db-go/login/entities"
 )
 
 type UserRepositoryInterface interface {

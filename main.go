@@ -1,25 +1,18 @@
 package main
 
 import (
-	"context"
-	"db-go/configs"
-	"db-go/repositories"
-	"fmt"
+	"db-go/login/register"
 	"log"
+	"net/http"
 )
 
 func main() {
-	repo := repositories.New(repositories.Options{
-		WriterSqlx: configs.GetWriterSqlx(),
-		ReaderSqlx: configs.GetReaderSqlx(),
-		WriterGorm: configs.GetWriterGorm(),
-		ReaderGorm: configs.GetReaderGorm(),
-	})
 
-	users, err := repo.User.GetAll(context.Background())
-
-	if err != nil {
-		log.Fatal(err)
+	srv := http.Server{
+		Addr: ":8081",
 	}
-	fmt.Println(users)
+
+	http.HandleFunc("/signup", register.CreateUserHandler)
+
+	log.Fatal(srv.ListenAndServe())
 }
