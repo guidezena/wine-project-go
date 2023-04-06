@@ -11,10 +11,10 @@ import (
 )
 
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Recebendo requisição em CreateUserHandler")
+	log.Printf("Receiving request in CreateUserHandler")
 
 	if r.Method != "POST" {
-		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
+		sendError(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -23,7 +23,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	user, err := parseUser(r)
 
 	if err != nil {
-		http.Error(w, "decode error", http.StatusBadRequest)
+		sendError(w, "Decode error", http.StatusBadRequest)
 		return
 	}
 
@@ -33,12 +33,12 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	existsEmail, err := UserExistsByEmail(reader, user.Email)
 
 	if err != nil {
-		http.Error(w, "OUTRO ERROR", http.StatusBadRequest)
+		sendError(w, "Error to validate if the registered email already exists", http.StatusBadRequest)
 		return
 	}
 
 	if existsEmail {
-		http.Error(w, "Este email já está em uso", http.StatusConflict)
+		sendError(w, "This email is already registered", http.StatusConflict)
 		return
 	}
 
@@ -48,7 +48,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	errorToWrite := addUser(writer, *user)
 
 	if errorToWrite != nil {
-		http.Error(w, errorToWrite.Error(), http.StatusBadRequest)
+		sendError(w, errorToWrite.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -108,4 +108,10 @@ func parseUser(r *http.Request) (*entities.User, error) {
 	}
 
 	return user, nil
+}
+
+func sendError(w http.ResponseWriter, message string, statusCode int) {
+	w.WriteHeader(statusCode)
+	w.Header().Set("X-Status-Message", message)
+	fmt.Fprintf(w, message)
 }
