@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -103,7 +104,7 @@ func parseUser(r *http.Request) (*entities.User, error) {
 	user := &entities.User{
 		Name:     name,
 		Email:    email,
-		Password: password,
+		Password: hashPassword(password),
 		UserType: ut,
 	}
 
@@ -114,4 +115,26 @@ func sendError(w http.ResponseWriter, message string, statusCode int) {
 	w.WriteHeader(statusCode)
 	w.Header().Set("X-Status-Message", message)
 	fmt.Fprintf(w, message)
+}
+
+func hashPassword(password string) string {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(hash)
+}
+
+func GetUser(email string) (*entities.User, error) {
+	var user entities.User
+
+	reader := configs.GetReaderGorm()
+
+	// Fazer uma consulta para buscar o usuário pelo email
+	err := reader.Where(&entities.User{Email: email}).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }

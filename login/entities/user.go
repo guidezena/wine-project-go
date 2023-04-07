@@ -9,3 +9,8 @@ type User struct {
 	Password string   `gorm:"password" json:"password"`
 	UserType UserType `gorm:"user_type" json:"user_type"`
 }
+
+type Credentials struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
