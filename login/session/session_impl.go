@@ -3,8 +3,11 @@ package session
 import (
 	"db-go/login/entities"
 	"db-go/login/register"
+	"errors"
 	"fmt"
 	"log"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -23,11 +26,14 @@ func GenerateToken(user *entities.User) (string, error) {
 	return token.SignedString([]byte("my-secret-key"))
 }
 
-func Authenticate(email, password string) (*entities.User, error) {
+func Authenticate(email string, password string) (*entities.User, error) {
 	user, err := register.GetUser(email)
 
 	// Comparar a senha hash armazenada com a senha fornecida pelo usuário
+	log.Printf(user.Email)
 	log.Printf(user.Password)
+
+	log.Printf(email)
 	log.Printf(password)
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
@@ -40,4 +46,38 @@ func Authenticate(email, password string) (*entities.User, error) {
 	}
 
 	return user, nil
+}
+
+func ValidateToken(tokenString string) error {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte("my-secret-key"), nil
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if !token.Valid {
+		return errors.New("Invalid token")
+	}
+
+	return nil
+}
+
+func AuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		tokenString := r.Header.Get("Authorization")
+		if tokenString == "" {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		err := ValidateToken(strings.Replace(tokenString, "Bearer ", "", 1))
+		if err != nil {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }

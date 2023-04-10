@@ -3,18 +3,20 @@ package main
 import (
 	"db-go/login"
 	"db-go/login/register"
-	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
+	router := mux.NewRouter()
 
-	srv := http.Server{
-		Addr: ":8081",
-	}
+	router.HandleFunc("/signup", register.CreateUserHandler)
+	router.HandleFunc("/login", login.Login)
 
-	http.HandleFunc("/signup", register.CreateUserHandler)
-	http.HandleFunc("/login", login.Login)
+	// authRouter := router.PathPrefix("/api").Subrouter()
+	// authRouter.Use(session.AuthMiddleware)
+	// authRouter.HandleFunc("/users", ListUsersHandler).Methods("GET")
 
-	log.Fatal(srv.ListenAndServe())
+	http.ListenAndServe(":8081", router)
 }

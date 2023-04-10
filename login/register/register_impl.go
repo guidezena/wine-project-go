@@ -99,6 +99,7 @@ func parseUser(r *http.Request) (*entities.User, error) {
 	} else {
 		return nil, fmt.Errorf("invalid userType")
 	}
+	log.Printf(hashPassword(password))
 
 	// criando um objeto do tipo User com as informações da request
 	user := &entities.User{
@@ -129,6 +130,8 @@ func GetUser(email string) (*entities.User, error) {
 	var user entities.User
 
 	reader := configs.GetReaderGorm()
+
+	log.Printf(email)
 
 	// Fazer uma consulta para buscar o usuário pelo email
 	err := reader.Where(&entities.User{Email: email}).First(&user).Error
