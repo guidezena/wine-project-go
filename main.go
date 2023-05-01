@@ -15,16 +15,13 @@ func main() {
 
 	router.HandleFunc("/signup", register.CreateUserHandler)
 	router.HandleFunc("/login", login.Login)
-	router.HandleFunc("/", login.Login)
-
 
 	// authRouter := router.PathPrefix("/api").Subrouter()
 	// authRouter.Use(session.AuthMiddleware)
 	// authRouter.HandleFunc("/users", ListUsersHandler).Methods("GET")
 
-	if port == "" {
+	if port != "" {
 		port = "8081"
 	}
-
-	http.ListenAndServe(port, router)
+	http.ListenAndServe(":"+port, router)
 }
