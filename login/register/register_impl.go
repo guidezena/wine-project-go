@@ -110,6 +110,8 @@ func parseUser(r *http.Request) (*entities.User, error) {
 }
 
 func sendError(w http.ResponseWriter, message string, statusCode int) {
+	log.Printf(message)
+
 	w.WriteHeader(statusCode)
 	w.Header().Set("X-Status-Message", message)
 	fmt.Fprintf(w, message)
