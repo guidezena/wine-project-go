@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 	"wine-project-go/login"
 	"wine-project-go/login/register"
 
@@ -9,14 +10,21 @@ import (
 )
 
 func main() {
+	port := os.Getenv("PORT")
 	router := mux.NewRouter()
 
 	router.HandleFunc("/signup", register.CreateUserHandler)
 	router.HandleFunc("/login", login.Login)
+	router.HandleFunc("/", login.Login)
+
 
 	// authRouter := router.PathPrefix("/api").Subrouter()
 	// authRouter.Use(session.AuthMiddleware)
 	// authRouter.HandleFunc("/users", ListUsersHandler).Methods("GET")
 
-	http.ListenAndServe(":8081", router)
+	if port == "" {
+		port = "8081"
+	}
+
+	http.ListenAndServe(port, router)
 }
