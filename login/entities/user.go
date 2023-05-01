@@ -2,7 +2,7 @@ package entities
 
 import "gorm.io/gorm"
 
-type User struct {
+type UserForm struct {
 	gorm.Model
 	Name            string `gorm:"name" json:"name"`
 	Email           string `gorm:"email" json:"email"`
@@ -10,7 +10,7 @@ type User struct {
 	ConfirmPassword string `gorm:"password_confirmation" json:"password_confirmation"`
 }
 
-type DBUser struct {
+type User struct {
 	gorm.Model
 	Name     string `gorm:"name" json:"name"`
 	Email    string `gorm:"email" json:"email"`

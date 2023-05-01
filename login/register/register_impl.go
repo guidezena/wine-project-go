@@ -14,20 +14,19 @@ import (
 
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request in CreateUserHandler")
-	log.Printf("Received request: %v", r)
 
 	if r.Method != "POST" {
 		sendError(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	var user entities.User
-	err := json.NewDecoder(r.Body).Decode(&user)
+	var userForm entities.UserForm
+	err := json.NewDecoder(r.Body).Decode(&userForm)
 	// Ler o corpo da requisição e decodificar os dados do novo usuário
 	//var user entities.User
 	//user, err := parseUser(r)
 
-	if user.Password != user.ConfirmPassword {
+	if userForm.Password != userForm.ConfirmPassword {
 		sendError(w, "As senhas nao sao iguais", http.StatusBadRequest)
 		return
 	}
@@ -40,7 +39,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	// Verificar se o usuário já existe (por exemplo, pelo email)
 
 	reader := configs.GetReaderGorm()
-	existsEmail, err := UserExistsByEmail(reader, user.Email)
+	existsEmail, err := UserExistsByEmail(reader, userForm.Email)
 
 	if err != nil {
 		sendError(w, "Error to validate if the registered email already exists", http.StatusBadRequest)
@@ -57,7 +56,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	// Se não existir, criar um novo usuário no banco de dados
 
 	writer := configs.GetWriterGorm()
-	errorToWrite := addUser(writer, user)
+	errorToWrite := addUser(writer, userForm)
 
 	if errorToWrite != nil {
 		log.Printf("errorToWrite")
@@ -85,16 +84,16 @@ func UserExistsByEmail(db *gorm.DB, email string) (bool, error) {
 	return false, nil
 }
 
-func addUser(db *gorm.DB, user entities.User) error {
+func addUser(db *gorm.DB, userForm entities.UserForm) error {
 	log.Printf("Add user")
 
-	dbuser := entities.DBUser{
-		Name:     user.Name,
-		Email:    user.Email,
-		Password: user.Password,
+	user := entities.User{
+		Name:     userForm.Name,
+		Email:    userForm.Email,
+		Password: userForm.Password,
 	}
 
-	result := db.Create(&dbuser)
+	result := db.Create(&user)
 
 	if result.Error != nil {
 		return result.Error
