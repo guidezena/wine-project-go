@@ -25,6 +25,8 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	// Ler o corpo da requisição e decodificar os dados do novo usuário
 	//var user entities.User
 	//user, err := parseUser(r)
+	log.Printf(userForm.Password)
+	log.Printf(userForm.ConfirmPassword)
 
 	if userForm.Password != userForm.ConfirmPassword {
 		sendError(w, "As senhas nao sao iguais", http.StatusBadRequest)
