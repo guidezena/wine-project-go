@@ -1,6 +1,7 @@
 package register
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,16 +15,16 @@ import (
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request in CreateUserHandler")
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
 	if r.Method != "POST" {
 		sendError(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
+	var user entities.User
+	err := json.NewDecoder(r.Body).Decode(&user)
 	// Ler o corpo da requisição e decodificar os dados do novo usuário
 	//var user entities.User
-	user, err := parseUser(r)
+	//user, err := parseUser(r)
 
 	if err != nil {
 		sendError(w, "Decode error", http.StatusBadRequest)
@@ -48,7 +49,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	// Se não existir, criar um novo usuário no banco de dados
 
 	writer := configs.GetWriterGorm()
-	errorToWrite := addUser(writer, *user)
+	errorToWrite := addUser(writer, user)
 
 	if errorToWrite != nil {
 		sendError(w, errorToWrite.Error(), http.StatusBadRequest)
