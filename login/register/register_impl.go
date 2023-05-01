@@ -29,7 +29,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf(userForm.ConfirmPassword)
 
 	if userForm.Password != userForm.ConfirmPassword {
-		sendError(w, "As senhas nao sao iguais", http.StatusBadRequest)
+		sendError(w, "As senhas nao sao iguais", 401)
 		return
 	}
 
@@ -52,8 +52,6 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		sendError(w, "This email is already registered", http.StatusConflict)
 		return
 	}
-
-	log.Printf("print 1")
 
 	// Se não existir, criar um novo usuário no banco de dados
 
@@ -120,9 +118,20 @@ func addUser(db *gorm.DB, userForm entities.UserForm) error {
 func sendError(w http.ResponseWriter, message string, statusCode int) {
 	log.Printf(message)
 
+	data := map[string]string{
+		"message": message,
+	}
+
+	response, err := json.Marshal(data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
-	//w.Header().Set("X-Status-Message", message)
-	//fmt.Fprintf(w, message)
+	w.Write(response)
+	log.Printf(message)
 }
 
 func hashPassword(password string) string {
