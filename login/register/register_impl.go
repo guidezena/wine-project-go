@@ -88,7 +88,13 @@ func UserExistsByEmail(db *gorm.DB, email string) (bool, error) {
 func addUser(db *gorm.DB, user entities.User) error {
 	log.Printf("Add user")
 
-	result := db.Create(&user)
+	dbuser := entities.DBUser{
+		Name:     user.Name,
+		Email:    user.Email,
+		Password: user.Password,
+	}
+
+	result := db.Create(&dbuser)
 
 	if result.Error != nil {
 		return result.Error
