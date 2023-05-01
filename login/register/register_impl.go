@@ -67,11 +67,20 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Retornar o novo usuário criado com um status HTTP 201 (criado)
-	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintf(w, "Usuário criado com sucesso!")
-	log.Printf("Usuário criado com sucesso!")
+	data := map[string]string{
+		"message": "Usuário criado com sucesso!",
+	}
 
+	response, err := json.Marshal(data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	w.Write(response)
+	log.Printf("Usuário criado com sucesso!")
 }
 
 func UserExistsByEmail(db *gorm.DB, email string) (bool, error) {
@@ -113,7 +122,7 @@ func sendError(w http.ResponseWriter, message string, statusCode int) {
 
 	w.WriteHeader(statusCode)
 	//w.Header().Set("X-Status-Message", message)
-	fmt.Fprintf(w, message)
+	//fmt.Fprintf(w, message)
 }
 
 func hashPassword(password string) string {
