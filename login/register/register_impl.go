@@ -1,8 +1,8 @@
 package register
 
 import (
-	"db-go/configs"
-	"db-go/login/entities"
+	"wine-project-go/configs"
+	"wine-project-go/login/entities"
 	"fmt"
 	"log"
 	"net/http"

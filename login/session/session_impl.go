@@ -1,14 +1,14 @@
 package session
 
 import (
-	"db-go/login/entities"
-	"db-go/login/register"
 	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"strings"
 	"time"
+	"wine-project-go/login/entities"
+	"wine-project-go/login/register"
 
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"

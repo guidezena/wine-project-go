@@ -1,4 +1,6 @@
-module db-go
+// +heroku goVersion go1.15
+
+module wine-project-go
 
 go 1.20
 

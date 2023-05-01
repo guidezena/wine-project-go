@@ -1,9 +1,9 @@
 package main
 
 import (
-	"db-go/login"
-	"db-go/login/register"
 	"net/http"
+	"wine-project-go/login"
+	"wine-project-go/login/register"
 
 	"github.com/gorilla/mux"
 )

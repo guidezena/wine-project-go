@@ -2,7 +2,7 @@ package users
 
 import (
 	"context"
-	"db-go/login/entities"
+	"wine-project-go/login/entities"
 
 	"gorm.io/gorm"
 )

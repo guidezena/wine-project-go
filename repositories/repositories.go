@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	users "db-go/repositories/Users"
+	users "wine-project-go/repositories/Users"
 
 	"gorm.io/gorm"
 )

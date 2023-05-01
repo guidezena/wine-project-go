@@ -1,11 +1,11 @@
 package login
 
 import (
-	"db-go/login/entities"
-	"db-go/login/session"
 	"encoding/json"
 	"log"
 	"net/http"
+	"wine-project-go/login/entities"
+	"wine-project-go/login/session"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
