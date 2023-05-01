@@ -99,7 +99,7 @@ func addUser(db *gorm.DB, userForm entities.UserForm) error {
 	user := entities.User{
 		Name:     userForm.Name,
 		Email:    userForm.Email,
-		Password: userForm.Password,
+		Password: hashPassword(userForm.Password),
 	}
 
 	result := db.Create(&user)
