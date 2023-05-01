@@ -26,6 +26,11 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	//var user entities.User
 	//user, err := parseUser(r)
 
+	if user.Password != user.ConfirmPassword {
+		sendError(w, "As senhas nao sao iguais", http.StatusBadRequest)
+		return
+	}
+
 	if err != nil {
 		sendError(w, "Decode error", http.StatusBadRequest)
 		return
