@@ -9,14 +9,22 @@ import (
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
-
 	log.Printf("Receiving request in Login")
-	credentials := parseCredentials(r)
 
-	log.Printf(credentials.Email)
-	log.Printf(credentials.Password)
+	var creds entities.Credentials
+	err := json.NewDecoder(r.Body).Decode(&creds)
 
-	user, err := auth.Authenticate(credentials.Email, credentials.Password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	//credentials := parseCredentials(r)
+
+	log.Printf(creds.Email)
+	log.Printf(creds.Password)
+
+	user, err := auth.Authenticate(creds.Email, creds.Password)
 	if err != nil {
 		log.Printf("autentication")
 
