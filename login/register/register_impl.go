@@ -112,7 +112,7 @@ func sendError(w http.ResponseWriter, message string, statusCode int) {
 	log.Printf(message)
 
 	w.WriteHeader(statusCode)
-	w.Header().Set("X-Status-Message", message)
+	//w.Header().Set("X-Status-Message", message)
 	fmt.Fprintf(w, message)
 }
 
