@@ -14,6 +14,7 @@ import (
 
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request in CreateUserHandler")
+	log.Printf("Received request: %v", r)
 
 	if r.Method != "POST" {
 		sendError(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -100,6 +101,40 @@ func addUser(db *gorm.DB, user entities.User) error {
 	return nil
 }
 
+func sendError(w http.ResponseWriter, message string, statusCode int) {
+	log.Printf(message)
+
+	w.WriteHeader(statusCode)
+	w.Header().Set("X-Status-Message", message)
+	fmt.Fprintf(w, message)
+}
+
+func hashPassword(password string) string {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(hash)
+}
+
+func GetUser(email string) (*entities.User, error) {
+	log.Printf("getUser")
+
+	var user entities.User
+
+	reader := configs.GetReaderGorm()
+
+	log.Printf(email)
+
+	// Fazer uma consulta para buscar o usuário pelo email
+	err := reader.Where(&entities.User{Email: email}).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 func parseUser(r *http.Request) (*entities.User, error) {
 	name := r.FormValue("name")
 	email := r.FormValue("email")
@@ -120,36 +155,4 @@ func parseUser(r *http.Request) (*entities.User, error) {
 	}
 
 	return user, nil
-}
-
-func sendError(w http.ResponseWriter, message string, statusCode int) {
-	log.Printf(message)
-
-	w.WriteHeader(statusCode)
-	w.Header().Set("X-Status-Message", message)
-	fmt.Fprintf(w, message)
-}
-
-func hashPassword(password string) string {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return string(hash)
-}
-
-func GetUser(email string) (*entities.User, error) {
-	var user entities.User
-
-	reader := configs.GetReaderGorm()
-
-	log.Printf(email)
-
-	// Fazer uma consulta para buscar o usuário pelo email
-	err := reader.Where(&entities.User{Email: email}).First(&user).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return &user, nil
 }
