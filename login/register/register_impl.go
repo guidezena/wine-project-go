@@ -46,12 +46,16 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("print 1")
+
 	// Se não existir, criar um novo usuário no banco de dados
 
 	writer := configs.GetWriterGorm()
 	errorToWrite := addUser(writer, user)
 
 	if errorToWrite != nil {
+		log.Printf("errorToWrite")
+
 		sendError(w, errorToWrite.Error(), http.StatusBadRequest)
 		return
 	}
@@ -59,9 +63,13 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	// Retornar o novo usuário criado com um status HTTP 201 (criado)
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintf(w, "Usuário criado com sucesso!")
+	log.Printf("Usuário criado com sucesso!")
+
 }
 
 func UserExistsByEmail(db *gorm.DB, email string) (bool, error) {
+	log.Printf("UserExistsByEmail")
+
 	var count int64
 	err := db.Unscoped().Model(&entities.User{}).Where("email = ?", email).Count(&count).Error
 	if err != nil {
@@ -74,6 +82,8 @@ func UserExistsByEmail(db *gorm.DB, email string) (bool, error) {
 }
 
 func addUser(db *gorm.DB, user entities.User) error {
+	log.Printf("Add user")
+
 	result := db.Create(&user)
 
 	if result.Error != nil {
