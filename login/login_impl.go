@@ -11,10 +11,10 @@ import (
 func Login(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Receiving request in Login")
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
 	credentials := parseCredentials(r)
+
+	log.Printf(credentials.Email)
+	log.Printf(credentials.Password)
 
 	user, err := auth.Authenticate(credentials.Email, credentials.Password)
 	if err != nil {
