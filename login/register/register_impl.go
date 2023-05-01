@@ -68,8 +68,6 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserExistsByEmail(db *gorm.DB, email string) (bool, error) {
-	log.Printf("UserExistsByEmail")
-
 	var count int64
 	err := db.Unscoped().Model(&entities.User{}).Where("email = ?", email).Count(&count).Error
 	if err != nil {
