@@ -1,11 +1,11 @@
 package register
 
 import (
-	"wine-project-go/configs"
-	"wine-project-go/login/entities"
 	"fmt"
 	"log"
 	"net/http"
+	"wine-project-go/configs"
+	"wine-project-go/login/entities"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -88,17 +88,12 @@ func parseUser(r *http.Request) (*entities.User, error) {
 	name := r.FormValue("name")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
-	userType := r.FormValue("userType")
+	passwordConfirm := r.FormValue("password_confirmation")
 
-	// criando um objeto do tipo UserType
-	var ut entities.UserType
-	if userType == "admin" {
-		ut = entities.Admin
-	} else if userType == "basic" {
-		ut = entities.Basic
-	} else {
-		return nil, fmt.Errorf("invalid userType")
+	if password != passwordConfirm {
+		return nil, fmt.Errorf("Your passwords do not match")
 	}
+
 	log.Printf(hashPassword(password))
 
 	// criando um objeto do tipo User com as informações da request
@@ -106,7 +101,6 @@ func parseUser(r *http.Request) (*entities.User, error) {
 		Name:     name,
 		Email:    email,
 		Password: hashPassword(password),
-		UserType: ut,
 	}
 
 	return user, nil
