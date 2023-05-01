@@ -4,17 +4,19 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"wine-project-go/login/entities"
 	"wine-project-go/login/auth"
+	"wine-project-go/login/entities"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Receiving request in Login")
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	credentials := parseCredentials(r)
 
-	user, err := session.Authenticate(credentials.Email, credentials.Password)
+	user, err := auth.Authenticate(credentials.Email, credentials.Password)
 	if err != nil {
 		log.Printf("autentication")
 
@@ -23,7 +25,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tokenString, err := session.GenerateToken(user)
+	tokenString, err := auth.GenerateToken(user)
 	if err != nil {
 		log.Printf("generate token")
 		http.Error(w, err.Error(), http.StatusInternalServerError)

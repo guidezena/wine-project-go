@@ -14,6 +14,8 @@ import (
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request in CreateUserHandler")
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	if r.Method != "POST" {
 		sendError(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
