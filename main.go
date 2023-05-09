@@ -23,9 +23,11 @@ func main() {
 	allowedHeaders := handlers.AllowedHeaders([]string{"Content-Type", "Authorization"})
 
 	router := mux.NewRouter()
-	createUserHandler := http.HandlerFunc(register.CreateUserHandler)
 
-	router.Handle("/signup", auth.AuthMiddleware(createUserHandler)).Methods("POST")
+	router.HandleFunc("/signup", func(w http.ResponseWriter, r *http.Request) {
+		auth.AuthMiddleware(http.HandlerFunc(register.CreateUserHandler)).ServeHTTP(w, r)
+	}).Methods("POST")
+
 	router.HandleFunc("/login", login.Login).Methods("POST")
 
 	// authRouter := router.PathPrefix("/api").Subrouter()

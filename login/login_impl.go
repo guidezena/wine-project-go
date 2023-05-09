@@ -19,8 +19,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//credentials := parseCredentials(r)
-
 	log.Printf(creds.Email)
 	log.Printf(creds.Password)
 
@@ -42,16 +40,4 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
-}
-
-func parseCredentials(r *http.Request) *entities.Credentials {
-	email := r.FormValue("email")
-	password := r.FormValue("password")
-
-	credentials := &entities.Credentials{
-		Email:    email,
-		Password: password,
-	}
-
-	return credentials
 }
