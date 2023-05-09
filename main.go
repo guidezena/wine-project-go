@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"os"
 	"wine-project-go/login"
-	"wine-project-go/login/auth"
 	"wine-project-go/login/register"
 
 	"github.com/gorilla/handlers"
@@ -24,10 +23,7 @@ func main() {
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/signup", func(w http.ResponseWriter, r *http.Request) {
-		auth.AuthMiddleware(http.HandlerFunc(register.CreateUserHandler)).ServeHTTP(w, r)
-	}).Methods("POST")
-
+	router.HandleFunc("/signup", register.CreateUserHandler).Methods("POST")
 	router.HandleFunc("/login", login.Login).Methods("POST")
 
 	// authRouter := router.PathPrefix("/api").Subrouter()
