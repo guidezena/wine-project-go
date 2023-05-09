@@ -23,17 +23,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	log.Printf(creds.Password)
 
 	user, err := auth.Authenticate(creds.Email, creds.Password)
+
 	if err != nil {
-		log.Printf("autentication")
-
 		http.Error(w, err.Error(), http.StatusUnauthorized)
-
 		return
 	}
 
 	tokenString, err := auth.GenerateToken(user)
 	if err != nil {
-		log.Printf("generate token")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 
 		return

@@ -15,6 +15,8 @@ import (
 )
 
 func GenerateToken(user *entities.User) (string, error) {
+	log.Printf("GenerateToken")
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id":  user.ID,
 		"exp":      time.Now().Add(time.Hour * 24).Unix(),
@@ -27,6 +29,8 @@ func GenerateToken(user *entities.User) (string, error) {
 }
 
 func Authenticate(email string, password string) (*entities.User, error) {
+	log.Printf("Authenticate")
+
 	user, err := register.GetUser(email)
 
 	// Comparar a senha hash armazenada com a senha fornecida pelo usuário
@@ -49,6 +53,8 @@ func Authenticate(email string, password string) (*entities.User, error) {
 }
 
 func ValidateToken(tokenString string) error {
+	log.Printf("ValidateToken")
+
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return []byte("my-secret-key"), nil
 	})

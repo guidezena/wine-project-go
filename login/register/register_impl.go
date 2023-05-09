@@ -149,8 +149,6 @@ func GetUser(email string) (*entities.User, error) {
 
 	reader := configs.GetReaderGorm()
 
-	log.Printf(email)
-
 	// Fazer uma consulta para buscar o usuário pelo email
 	err := reader.Where(&entities.User{Email: email}).First(&user).Error
 	if err != nil {
