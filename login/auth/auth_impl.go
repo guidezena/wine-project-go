@@ -43,8 +43,10 @@ func Authenticate(email string, password string) (*entities.User, error) {
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
 		if err == bcrypt.ErrMismatchedHashAndPassword {
+			log.Printf("Invalid credentials")
 			return nil, fmt.Errorf("Invalid credentials")
 		} else {
+			log.Printf("Erro CompareHashAndPassword")
 			return nil, err
 		}
 	}

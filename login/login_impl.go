@@ -25,13 +25,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	user, err := auth.Authenticate(creds.Email, creds.Password)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
+		http.Error(w, "StatusUnauthorized", http.StatusUnauthorized)
 		return
 	}
 
 	tokenString, err := auth.GenerateToken(user)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "InternalServerError", http.StatusInternalServerError)
 
 		return
 	}
