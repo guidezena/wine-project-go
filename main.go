@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 	"os"
+	"wine-project-go/categories"
+
 	"wine-project-go/login"
 	"wine-project-go/login/register"
 
@@ -25,6 +27,8 @@ func main() {
 
 	router.HandleFunc("/signup", register.CreateUserHandler).Methods("POST")
 	router.HandleFunc("/login", login.Login).Methods("POST")
+	router.HandleFunc("/category", categories.AddCategory).Methods("POST")
+	router.HandleFunc("/category", categories.GetCategories).Methods("GET")
 
 	// authRouter := router.PathPrefix("/api").Subrouter()
 	// authRouter.Use(session.AuthMiddleware)
