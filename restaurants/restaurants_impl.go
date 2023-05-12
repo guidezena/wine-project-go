@@ -55,7 +55,7 @@ func createRestaurant(db *gorm.DB, restaurant entities.Restaurant) error {
 	log.Printf("createRestaurant")
 
 	newRestaurant := entities.Restaurant{
-		UserId:      restaurant.UserId,
+		IdUser:      restaurant.IdUser,
 		Name:        restaurant.Name,
 		Image:       restaurant.Image,
 		Description: restaurant.Description,
