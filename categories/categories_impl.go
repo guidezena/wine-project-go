@@ -54,7 +54,8 @@ func createCategory(db *gorm.DB, category entities.Category) error {
 	log.Printf("createCategory")
 
 	newCategory := entities.Category{
-		Name: category.Name,
+		Name:  category.Name,
+		Image: category.Image,
 	}
 
 	result := db.Create(&newCategory)
