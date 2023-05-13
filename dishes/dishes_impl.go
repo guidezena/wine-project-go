@@ -92,7 +92,7 @@ func GetDishes(w http.ResponseWriter, r *http.Request) {
 
 	// Realize a busca com base nos parâmetros fornecidos
 	var dishes []entities.Dish
-	query := db
+	query := reader
 	if idRestaurant != "" {
 		query = query.Where("restaurant_id = ?", idRestaurant)
 	}
