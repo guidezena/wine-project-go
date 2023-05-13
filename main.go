@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"wine-project-go/categories"
+	"wine-project-go/dishes"
 	"wine-project-go/restaurants"
 
 	"wine-project-go/login"
@@ -31,10 +32,8 @@ func main() {
 	router.HandleFunc("/category", categories.AddCategory).Methods("POST")
 	router.HandleFunc("/category", categories.GetCategories).Methods("GET")
 	router.HandleFunc("/restaurant", restaurants.AddRestaurant).Methods("POST")
-
-	// authRouter := router.PathPrefix("/api").Subrouter()
-	// authRouter.Use(session.AuthMiddleware)
-	// authRouter.HandleFunc("/users", ListUsersHandler).Methods("GET")
+	router.HandleFunc("/dishes", dishes.AddDish).Methods("POST")
+	router.HandleFunc("/dishes", dishes.GetDishes).Methods("GET")
 
 	handler := handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders)(router)
 	http.ListenAndServe(":"+port, handler)
