@@ -74,3 +74,36 @@ func createRestaurant(db *gorm.DB, restaurant entities.Restaurant) error {
 
 	return nil
 }
+
+func GetRestaurants(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Receiving request GetRestaurants")
+
+	reader := configs.GetReaderGorm()
+	restaurants, err := getRestaurants(reader)
+
+	if err != nil {
+		// Trate o erro
+		http.Error(w, "Erro ao obter restaurantes", http.StatusInternalServerError)
+		return
+	}
+
+	// Enviar os restaurantes como resposta JSON
+	jsonRestaurants, err := json.Marshal(restaurants)
+	if err != nil {
+		// Trate o erro
+		http.Error(w, "Erro ao converter restaurantes para JSON", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonRestaurants)
+}
+
+func getRestaurants(db *gorm.DB) ([]entities.Restaurant, error) {
+	var restaurants []entities.Restaurant
+	err := db.Find(&restaurants).Error
+	if err != nil {
+		return nil, err
+	}
+	return restaurants, nil
+}

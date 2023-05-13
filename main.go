@@ -32,6 +32,7 @@ func main() {
 	router.HandleFunc("/category", categories.AddCategory).Methods("POST")
 	router.HandleFunc("/category", categories.GetCategories).Methods("GET")
 	router.HandleFunc("/restaurant", restaurants.AddRestaurant).Methods("POST")
+	router.HandleFunc("/restaurant", restaurants.AddRestaurant).Methods("GET")
 	router.HandleFunc("/dishes", dishes.AddDish).Methods("POST")
 	router.HandleFunc("/dishes", dishes.GetDishes).Methods("GET")
 
