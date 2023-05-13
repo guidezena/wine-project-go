@@ -10,3 +10,7 @@ type Dish struct {
 	Image        string `gorm:"image" json:"image"`
 	Description  string `gorm:"description" json:"description"`
 }
+
+func (Dish) TableName() string {
+	return "dishes"
+}
