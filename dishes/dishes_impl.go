@@ -35,7 +35,7 @@ func AddDish(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]string{
-		"message": "Categoria criada com sucesso!",
+		"message": "Prato criada com sucesso!",
 	}
 
 	response, err := json.Marshal(data)
@@ -47,7 +47,7 @@ func AddDish(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(response)
-	log.Printf("Categoria criada com sucesso!")
+	log.Printf("Prato criada com sucesso!")
 }
 
 func createDish(db *gorm.DB, dish entities.Dish) error {
@@ -94,9 +94,11 @@ func GetDishes(w http.ResponseWriter, r *http.Request) {
 	var dishes []entities.Dish
 	query := reader
 	if idRestaurant != "" {
+		log.Printf("Buscando restaurant_id")
 		query = query.Where("restaurant_id = ?", idRestaurant)
 	}
 	if idCategoria != "" {
+		log.Printf("Buscando category_id")
 		query = query.Where("category_id = ?", idCategoria)
 	}
 	err = query.Find(&dishes).Error
@@ -111,6 +113,8 @@ func GetDishes(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erro ao converter pratos para JSON", http.StatusInternalServerError)
 		return
 	}
+
+	log.Printf("DEU BOM A BUSCA")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonDishes)
