@@ -8,6 +8,7 @@ type UserForm struct {
 	Email           string `gorm:"email" json:"email"`
 	Password        string `gorm:"password" json:"password"`
 	ConfirmPassword string `gorm:"password_confirmation" json:"password_confirmation"`
+	IsAdmin         bool   `gorm:"is_admin" json:"is_admin"`
 }
 
 type User struct {
@@ -15,6 +16,7 @@ type User struct {
 	Name     string `gorm:"name" json:"name"`
 	Email    string `gorm:"email" json:"email"`
 	Password string `gorm:"password" json:"password"`
+	IsAdmin  bool   `gorm:"is_admin" json:"is_admin"`
 }
 
 type Credentials struct {
