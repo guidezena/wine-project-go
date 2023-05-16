@@ -35,7 +35,7 @@ func AddDrink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]string{
-		"message": "Drink criada com sucesso!",
+		"message": "Drink criado com sucesso!",
 	}
 
 	response, err := json.Marshal(data)
