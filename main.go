@@ -5,6 +5,7 @@ import (
 	"os"
 	"wine-project-go/categories"
 	"wine-project-go/dishes"
+	"wine-project-go/drinks"
 	"wine-project-go/restaurants"
 
 	"wine-project-go/login"
@@ -35,6 +36,8 @@ func main() {
 	router.HandleFunc("/restaurant", restaurants.GetRestaurants).Methods("GET")
 	router.HandleFunc("/dishes", dishes.AddDish).Methods("POST")
 	router.HandleFunc("/dishes", dishes.GetDishes).Methods("GET")
+	router.HandleFunc("/drinks", drinks.AddDrink).Methods("POST")
+	router.HandleFunc("/drinks", drinks.GetDrinks).Methods("GET")
 
 	handler := handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders)(router)
 	http.ListenAndServe(":"+port, handler)
