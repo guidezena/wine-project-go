@@ -53,7 +53,7 @@ func AddDrink(w http.ResponseWriter, r *http.Request) {
 func createDrink(db *gorm.DB, drink entities.Drink) error {
 	log.Printf("createDrink")
 
-	newDrink := entities.Dish{
+	newDrink := entities.Drink{
 		Name:        drink.Name,
 		Image:       drink.Image,
 		Description: drink.Description,
@@ -76,7 +76,7 @@ func GetDrinks(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request GetDrinks")
 
 	reader := configs.GetReaderGorm()
-	categories, err := getDrinks(reader)
+	drinks, err := getDrinks(reader)
 
 	if err != nil {
 		// Trate o erro
@@ -85,7 +85,7 @@ func GetDrinks(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Enviar as categorias como resposta JSON
-	jsonCategories, err := json.Marshal(categories)
+	jsonDrinks, err := json.Marshal(drinks)
 	if err != nil {
 		// Trate o erro
 		http.Error(w, "Erro ao converter drinks para JSON", http.StatusInternalServerError)
@@ -93,7 +93,7 @@ func GetDrinks(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonCategories)
+	w.Write(jsonDrinks)
 }
 
 func getDrinks(db *gorm.DB) ([]entities.Drink, error) {
