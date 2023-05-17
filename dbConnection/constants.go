@@ -1,4 +1,4 @@
-package configs
+package dbConnection
 
 const DB_CONNECTION = "mysql:host=wine-project.ckf9c2oqtfbc.us-east-2.rds.amazonaws.com;port=3306;dbname=wine_project"
 const DB_USER = "admin"

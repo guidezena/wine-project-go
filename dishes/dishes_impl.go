@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"wine-project-go/configs"
+	"wine-project-go/dbConnection"
 	"wine-project-go/entities"
 	"wine-project-go/utils"
 
@@ -24,9 +24,9 @@ func AddDish(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writer := configs.GetWriterGorm()
+	writer := dbConnection.GetWriterGorm()
 	errorToWrite := createDish(writer, dish)
-	configs.CloseDbConnection(writer)
+	dbConnection.CloseDbConnection(writer)
 
 	if errorToWrite != nil {
 		log.Printf("errorToWrite")
@@ -84,7 +84,7 @@ func GetDishes(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erro ao analisar os parâmetros da solicitação", http.StatusBadRequest)
 		return
 	}
-	reader := configs.GetReaderGorm()
+	reader := dbConnection.GetReaderGorm()
 
 	// Verifique os parâmetros fornecidos
 	idRestaurant := r.Form.Get("restaurant_id")
@@ -103,7 +103,7 @@ func GetDishes(w http.ResponseWriter, r *http.Request) {
 	}
 	err = query.Find(&dishes).Error
 
-	configs.CloseDbConnection(query)
+	dbConnection.CloseDbConnection(query)
 
 	if err != nil {
 		http.Error(w, "Erro ao obter pratos", http.StatusInternalServerError)

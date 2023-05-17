@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"wine-project-go/configs"
+	"wine-project-go/dbConnection"
 	"wine-project-go/entities"
 	"wine-project-go/utils"
 
@@ -24,9 +24,9 @@ func AddRestaurant(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writer := configs.GetWriterGorm()
+	writer := dbConnection.GetWriterGorm()
 	errorToWrite := createRestaurant(writer, restaurant)
-	configs.CloseDbConnection(writer)
+	dbConnection.CloseDbConnection(writer)
 
 	if errorToWrite != nil {
 		log.Printf("errorToWrite")
@@ -79,9 +79,9 @@ func createRestaurant(db *gorm.DB, restaurant entities.Restaurant) error {
 func GetRestaurants(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request GetRestaurants")
 
-	reader := configs.GetReaderGorm()
+	reader := dbConnection.GetReaderGorm()
 	restaurants, err := getRestaurants(reader)
-	configs.CloseDbConnection(reader)
+	dbConnection.CloseDbConnection(reader)
 
 	if err != nil {
 		// Trate o erro

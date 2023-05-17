@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"wine-project-go/configs"
+	"wine-project-go/dbConnection"
 	"wine-project-go/entities"
 	"wine-project-go/utils"
 
@@ -40,9 +40,9 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Verificar se o usuário já existe (por exemplo, pelo email)
 
-	reader := configs.GetReaderGorm()
+	reader := dbConnection.GetReaderGorm()
 	existsEmail, err := UserExistsByEmail(reader, userForm.Email)
-	configs.CloseDbConnection(reader)
+	dbConnection.CloseDbConnection(reader)
 
 	if err != nil {
 		utils.SendError(w, "Error to validate if the registered email already exists", http.StatusBadRequest)
@@ -56,9 +56,9 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Se não existir, criar um novo usuário no banco de dados
 
-	writer := configs.GetWriterGorm()
+	writer := dbConnection.GetWriterGorm()
 	errorToWrite := addUser(writer, userForm)
-	configs.CloseDbConnection(writer)
+	dbConnection.CloseDbConnection(writer)
 
 	if errorToWrite != nil {
 		log.Printf("errorToWrite")
@@ -131,9 +131,9 @@ func GetUser(email string) (*entities.User, error) {
 
 	var user entities.User
 
-	reader := configs.GetReaderGorm()
+	reader := dbConnection.GetReaderGorm()
 	err := reader.Where(&entities.User{Email: email}).First(&user).Error
-	configs.CloseDbConnection(reader)
+	dbConnection.CloseDbConnection(reader)
 
 	if err != nil {
 		return nil, err

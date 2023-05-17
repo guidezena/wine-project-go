@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"wine-project-go/configs"
+	"wine-project-go/dbConnection"
 	"wine-project-go/entities"
 	"wine-project-go/utils"
 
@@ -24,9 +24,9 @@ func AddCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writer := configs.GetWriterGorm()
+	writer := dbConnection.GetWriterGorm()
 	errorToWrite := createCategory(writer, category)
-	configs.CloseDbConnection(writer)
+	dbConnection.CloseDbConnection(writer)
 
 	if errorToWrite != nil {
 		log.Printf("errorToWrite")
@@ -75,9 +75,9 @@ func createCategory(db *gorm.DB, category entities.Category) error {
 func GetCategories(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request GetCategories")
 
-	reader := configs.GetReaderGorm()
+	reader := dbConnection.GetReaderGorm()
 	categories, err := getCategories(reader)
-	configs.CloseDbConnection(reader)
+	dbConnection.CloseDbConnection(reader)
 
 	if err != nil {
 		// Trate o erro
