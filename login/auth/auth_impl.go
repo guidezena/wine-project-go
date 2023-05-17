@@ -24,6 +24,7 @@ func GenerateToken(user *entities.User) (string, error) {
 		"iat":      time.Now().Unix(),
 		"sub":      user.Email,
 		"username": user.Name,
+		"is_admin": user.IsAdmin,
 	})
 	return token.SignedString([]byte("my-secret-key"))
 }
