@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"wine-project-go/configs"
-	"wine-project-go/login/entities"
+	"wine-project-go/entities"
 	"wine-project-go/utils"
 
 	"golang.org/x/crypto/bcrypt"

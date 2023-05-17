@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"wine-project-go/entities"
 	"wine-project-go/login/auth"
-	"wine-project-go/login/entities"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {

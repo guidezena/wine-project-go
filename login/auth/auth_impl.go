@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	"wine-project-go/login/entities"
+	"wine-project-go/entities"
 	"wine-project-go/login/register"
 
 	"github.com/dgrijalva/jwt-go"
