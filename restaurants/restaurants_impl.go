@@ -26,6 +26,7 @@ func AddRestaurant(w http.ResponseWriter, r *http.Request) {
 
 	writer := configs.GetWriterGorm()
 	errorToWrite := createRestaurant(writer, restaurant)
+	configs.CloseDbConnection(writer)
 
 	if errorToWrite != nil {
 		log.Printf("errorToWrite")
@@ -80,6 +81,7 @@ func GetRestaurants(w http.ResponseWriter, r *http.Request) {
 
 	reader := configs.GetReaderGorm()
 	restaurants, err := getRestaurants(reader)
+	configs.CloseDbConnection(reader)
 
 	if err != nil {
 		// Trate o erro

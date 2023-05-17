@@ -26,6 +26,7 @@ func AddDrink(w http.ResponseWriter, r *http.Request) {
 
 	writer := configs.GetWriterGorm()
 	errorToWrite := createDrink(writer, drink)
+	configs.CloseDbConnection(writer)
 
 	if errorToWrite != nil {
 		log.Printf("errorToWrite")
@@ -77,6 +78,7 @@ func GetDrinks(w http.ResponseWriter, r *http.Request) {
 
 	reader := configs.GetReaderGorm()
 	drinks, err := getDrinks(reader)
+	configs.CloseDbConnection(reader)
 
 	if err != nil {
 		// Trate o erro

@@ -2,6 +2,7 @@ package configs
 
 import (
 	"fmt"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
@@ -32,4 +33,15 @@ func GetWriterGorm() *gorm.DB {
 	}
 
 	return write
+}
+
+func CloseDbConnection(db *gorm.DB) {
+	dbSQL, err := db.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = dbSQL.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
 }

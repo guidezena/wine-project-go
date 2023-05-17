@@ -26,6 +26,7 @@ func AddCategory(w http.ResponseWriter, r *http.Request) {
 
 	writer := configs.GetWriterGorm()
 	errorToWrite := createCategory(writer, category)
+	configs.CloseDbConnection(writer)
 
 	if errorToWrite != nil {
 		log.Printf("errorToWrite")
@@ -76,6 +77,7 @@ func GetCategories(w http.ResponseWriter, r *http.Request) {
 
 	reader := configs.GetReaderGorm()
 	categories, err := getCategories(reader)
+	configs.CloseDbConnection(reader)
 
 	if err != nil {
 		// Trate o erro

@@ -42,6 +42,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	reader := configs.GetReaderGorm()
 	existsEmail, err := UserExistsByEmail(reader, userForm.Email)
+	configs.CloseDbConnection(reader)
 
 	if err != nil {
 		utils.SendError(w, "Error to validate if the registered email already exists", http.StatusBadRequest)
@@ -57,6 +58,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	writer := configs.GetWriterGorm()
 	errorToWrite := addUser(writer, userForm)
+	configs.CloseDbConnection(writer)
 
 	if errorToWrite != nil {
 		log.Printf("errorToWrite")
@@ -130,9 +132,9 @@ func GetUser(email string) (*entities.User, error) {
 	var user entities.User
 
 	reader := configs.GetReaderGorm()
-
-	// Fazer uma consulta para buscar o usuário pelo email
 	err := reader.Where(&entities.User{Email: email}).First(&user).Error
+	configs.CloseDbConnection(reader)
+
 	if err != nil {
 		return nil, err
 	}

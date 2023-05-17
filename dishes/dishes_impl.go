@@ -26,6 +26,7 @@ func AddDish(w http.ResponseWriter, r *http.Request) {
 
 	writer := configs.GetWriterGorm()
 	errorToWrite := createDish(writer, dish)
+	configs.CloseDbConnection(writer)
 
 	if errorToWrite != nil {
 		log.Printf("errorToWrite")
@@ -77,14 +78,13 @@ func createDish(db *gorm.DB, dish entities.Dish) error {
 func GetDishes(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request GetDishes")
 
-	reader := configs.GetReaderGorm()
-
 	// Obtenha os parâmetros da solicitação POST
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, "Erro ao analisar os parâmetros da solicitação", http.StatusBadRequest)
 		return
 	}
+	reader := configs.GetReaderGorm()
 
 	// Verifique os parâmetros fornecidos
 	idRestaurant := r.Form.Get("restaurant_id")
@@ -102,6 +102,8 @@ func GetDishes(w http.ResponseWriter, r *http.Request) {
 		query = query.Where("category_id = ?", idCategoria)
 	}
 	err = query.Find(&dishes).Error
+
+	configs.CloseDbConnection(query)
 
 	if err != nil {
 		http.Error(w, "Erro ao obter pratos", http.StatusInternalServerError)
