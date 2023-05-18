@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 	"wine-project-go/entities"
-	"wine-project-go/login/register"
+	"wine-project-go/repositories/register"
 
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"

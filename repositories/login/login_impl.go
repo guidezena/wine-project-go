@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"wine-project-go/entities"
-	"wine-project-go/login/auth"
+	"wine-project-go/repositories/auth"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {

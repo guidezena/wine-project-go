@@ -3,13 +3,13 @@ package main
 import (
 	"net/http"
 	"os"
-	"wine-project-go/categories"
-	"wine-project-go/dishes"
-	"wine-project-go/drinks"
-	"wine-project-go/restaurants"
+	"wine-project-go/repositories/categories"
+	"wine-project-go/repositories/dishes"
+	"wine-project-go/repositories/drinks"
+	"wine-project-go/repositories/restaurants"
 
-	"wine-project-go/login"
-	"wine-project-go/login/register"
+	"wine-project-go/repositories/login"
+	"wine-project-go/repositories/register"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
