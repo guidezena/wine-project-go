@@ -7,6 +7,7 @@ import (
 	"wine-project-go/repositories/dishes"
 	"wine-project-go/repositories/drinks"
 	"wine-project-go/repositories/restaurants"
+	"wine-project-go/repositories/users"
 
 	"wine-project-go/repositories/login"
 	"wine-project-go/repositories/register"
@@ -28,12 +29,23 @@ func main() {
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/signup", register.CreateUserHandler).Methods("POST")
 	router.HandleFunc("/login", login.Login).Methods("POST")
-	router.HandleFunc("/category", categories.AddCategory).Methods("POST")
+
+	router.HandleFunc("/user", register.CreateUserHandler).Methods("POST")
+	router.HandleFunc("/user", users.GetUsers).Methods("GET")
+	router.HandleFunc("/user/{id}", users.DeleteUserHandler).Methods("DELETE")
+	router.HandleFunc("/user/{id}", users.UpdateUserHandler).Methods("PUT")
+
 	router.HandleFunc("/category", categories.GetCategories).Methods("GET")
+	router.HandleFunc("/category", categories.AddCategory).Methods("POST")
+	//router.HandleFunc("/category", categories.AddCategory).Methods("DELETE")
+	//router.HandleFunc("/category", categories.AddCategory).Methods("PUT")
+
 	router.HandleFunc("/restaurant", restaurants.AddRestaurant).Methods("POST")
 	router.HandleFunc("/restaurant", restaurants.GetRestaurants).Methods("GET")
+	//router.HandleFunc("/category", categories.AddCategory).Methods("DELETE")
+	//router.HandleFunc("/category", categories.AddCategory).Methods("PUT")
+
 	router.HandleFunc("/dishes", dishes.AddDish).Methods("POST")
 	router.HandleFunc("/dishes", dishes.GetDishes).Methods("GET")
 	router.HandleFunc("/drinks", drinks.AddDrink).Methods("POST")
