@@ -8,11 +8,12 @@ import (
 	"wine-project-go/entities"
 	"wine-project-go/utils"
 
+	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
 
-func AddRestaurant(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Receiving request AddRestaurant")
+func AddRestaurantHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Receiving request AddRestaurantHandler")
 
 	var restaurant entities.Restaurant
 	err := json.NewDecoder(r.Body).Decode(&restaurant)
@@ -76,8 +77,8 @@ func createRestaurant(db *gorm.DB, restaurant entities.Restaurant) error {
 	return nil
 }
 
-func GetRestaurants(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Receiving request GetRestaurants")
+func GetRestaurantsHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Receiving request GetRestaurantsHandler")
 
 	reader := dbConnection.GetReaderGorm()
 	restaurants, err := getRestaurants(reader)
@@ -108,4 +109,104 @@ func getRestaurants(db *gorm.DB) ([]entities.Restaurant, error) {
 		return nil, err
 	}
 	return restaurants, nil
+}
+
+func DeleteRestaurantHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Receiving request DeleteRestaurantHandler")
+
+	restaurantID := mux.Vars(r)["id"]
+
+	writer := dbConnection.GetWriterGorm()
+	errorToDelete := deleteRestaurant(writer, restaurantID)
+	dbConnection.CloseDbConnection(writer)
+
+	if errorToDelete != nil {
+		utils.SendError(w, errorToDelete.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]string{
+		"message": "Resturant excluída com sucesso!",
+	}
+
+	response, err := json.Marshal(data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+	log.Printf("Restaurante excluído com sucesso!")
+}
+
+func deleteRestaurant(db *gorm.DB, restaurantID string) error {
+	log.Printf("deleteRestaurant")
+
+	result := db.Delete(&entities.Restaurant{}, restaurantID)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return &entities.CustomError{Message: "Nenhuma linha foi afetada"}
+	}
+
+	return nil
+}
+
+func UpdateRestaurantHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Receiving request UpdateRestaurantHandler")
+
+	restaurantID := mux.Vars(r)["id"]
+
+	var updatedRestaurant entities.Restaurant
+	err := json.NewDecoder(r.Body).Decode(&updatedRestaurant)
+
+	if err != nil {
+		utils.SendError(w, "Decode error", http.StatusBadRequest)
+		return
+	}
+
+	writer := dbConnection.GetWriterGorm()
+	errorToUpdate := updateRestaurant(writer, restaurantID, updatedRestaurant)
+	dbConnection.CloseDbConnection(writer)
+
+	if errorToUpdate != nil {
+		utils.SendError(w, errorToUpdate.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]string{
+		"message": "Restaurante atualizado com sucesso!",
+	}
+
+	response, err := json.Marshal(data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+	log.Printf("Restaurante atualizado com sucesso!")
+}
+
+func updateRestaurant(db *gorm.DB, restaurantID string, updatedRestaurant entities.Restaurant) error {
+	log.Printf("updateRestaurant")
+
+	result := db.Model(&entities.Restaurant{}).Where("ID = ?", restaurantID).Updates(updatedRestaurant)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return &entities.CustomError{Message: "Nenhuma linha foi afetada"}
+	}
+
+	return nil
 }

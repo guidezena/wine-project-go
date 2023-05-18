@@ -41,13 +41,14 @@ func main() {
 	router.HandleFunc("/categories/{id}", categories.DeleteCategoryHandler).Methods("DELETE")
 	router.HandleFunc("/categories/{id}", categories.UpdateCategoryHandler).Methods("PUT")
 
-	router.HandleFunc("/restaurant", restaurants.AddRestaurant).Methods("POST")
-	router.HandleFunc("/restaurant", restaurants.GetRestaurants).Methods("GET")
-	//router.HandleFunc("/category", categories.AddCategory).Methods("DELETE")
-	//router.HandleFunc("/category", categories.AddCategory).Methods("PUT")
+	router.HandleFunc("/restaurants", restaurants.AddRestaurantHandler).Methods("POST")
+	router.HandleFunc("/restaurants", restaurants.GetRestaurantsHandler).Methods("GET")
+	router.HandleFunc("/restaurants/{id}", restaurants.DeleteRestaurantHandler).Methods("DELETE")
+	router.HandleFunc("/restaurants/{id}", restaurants.UpdateRestaurantHandler).Methods("PUT")
 
 	router.HandleFunc("/dishes", dishes.AddDish).Methods("POST")
 	router.HandleFunc("/dishes", dishes.GetDishes).Methods("GET")
+
 	router.HandleFunc("/drinks", drinks.AddDrink).Methods("POST")
 	router.HandleFunc("/drinks", drinks.GetDrinks).Methods("GET")
 
