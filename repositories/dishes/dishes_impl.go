@@ -8,10 +8,11 @@ import (
 	"wine-project-go/entities"
 	"wine-project-go/utils"
 
+	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
 
-func AddDish(w http.ResponseWriter, r *http.Request) {
+func AddDishHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request AddDish")
 
 	var dish entities.Dish
@@ -75,7 +76,7 @@ func createDish(db *gorm.DB, dish entities.Dish) error {
 	return nil
 }
 
-func GetDishes(w http.ResponseWriter, r *http.Request) {
+func GetDishesHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request GetDishes")
 
 	// Obtenha os parâmetros da solicitação POST
@@ -116,8 +117,106 @@ func GetDishes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("DEU BOM A BUSCA")
-
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonDishes)
+}
+
+func DeleteDishHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Receiving request DeleteDishHandler")
+
+	dishID := mux.Vars(r)["id"]
+
+	writer := dbConnection.GetWriterGorm()
+	errorToDelete := deleteDish(writer, dishID)
+	dbConnection.CloseDbConnection(writer)
+
+	if errorToDelete != nil {
+		utils.SendError(w, errorToDelete.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]string{
+		"message": "Prato excluído com sucesso!",
+	}
+
+	response, err := json.Marshal(data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+	log.Printf("Prato excluído com sucesso!")
+}
+
+func deleteDish(db *gorm.DB, dishID string) error {
+	log.Printf("deleteDish")
+
+	result := db.Delete(&entities.Dish{}, dishID)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return &entities.CustomError{Message: "Nenhuma linha foi afetada"}
+	}
+
+	return nil
+}
+
+func UpdateDishHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Receiving request UpdateDishHandler")
+
+	dishID := mux.Vars(r)["id"]
+
+	var updatedDish entities.Dish
+	err := json.NewDecoder(r.Body).Decode(&updatedDish)
+
+	if err != nil {
+		utils.SendError(w, "Decode error", http.StatusBadRequest)
+		return
+	}
+
+	writer := dbConnection.GetWriterGorm()
+	errorToUpdate := updateDish(writer, dishID, updatedDish)
+	dbConnection.CloseDbConnection(writer)
+
+	if errorToUpdate != nil {
+		utils.SendError(w, errorToUpdate.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]string{
+		"message": "Prato atualizado com sucesso!",
+	}
+
+	response, err := json.Marshal(data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+	log.Printf("Prato atualizado com sucesso!")
+}
+
+func updateDish(db *gorm.DB, dishID string, updatedDish entities.Dish) error {
+	log.Printf("updateDish")
+
+	result := db.Model(&entities.Dish{}).Where("ID = ?", dishID).Updates(updatedDish)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return &entities.CustomError{Message: "Nenhuma linha foi afetada"}
+	}
+
+	return nil
 }
