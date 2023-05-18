@@ -194,7 +194,7 @@ func UpdateCategoryHandler(w http.ResponseWriter, r *http.Request) {
 func updateCategory(db *gorm.DB, categoryID string, updatedCategory entities.Category) error {
 	log.Printf("updateCategory")
 
-	result := db.Model(&entities.User{}).Where("ID = ?", categoryID).Updates(updatedCategory)
+	result := db.Model(&entities.Category{}).Where("ID = ?", categoryID).Updates(updatedCategory)
 
 	if result.Error != nil {
 		return result.Error
