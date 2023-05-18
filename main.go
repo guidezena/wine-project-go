@@ -31,10 +31,10 @@ func main() {
 
 	router.HandleFunc("/login", login.Login).Methods("POST")
 
-	router.HandleFunc("/user", register.CreateUserHandler).Methods("POST")
-	router.HandleFunc("/user", users.GetUsers).Methods("GET")
-	router.HandleFunc("/user/{id}", users.DeleteUserHandler).Methods("DELETE")
-	router.HandleFunc("/user/{id}", users.UpdateUserHandler).Methods("PUT")
+	router.HandleFunc("/users", register.CreateUserHandler).Methods("POST")
+	router.HandleFunc("/users", users.GetUsers).Methods("GET")
+	router.HandleFunc("/users/{id}", users.DeleteUserHandler).Methods("DELETE")
+	router.HandleFunc("/users/{id}", users.UpdateUserHandler).Methods("PUT")
 
 	router.HandleFunc("/category", categories.GetCategories).Methods("GET")
 	router.HandleFunc("/category", categories.AddCategory).Methods("POST")
