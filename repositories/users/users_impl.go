@@ -130,7 +130,7 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 func updateUser(db *gorm.DB, userID string, updatedUser entities.User) error {
 	log.Printf("updateUser")
 
-	result := db.Model(&entities.Category{}).Where("id = ?", userID).Updates(updatedUser)
+	result := db.Model(&entities.Category{}).Where("ID = ?", userID).Updates(updatedUser)
 
 	if result.Error != nil {
 		return result.Error
