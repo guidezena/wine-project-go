@@ -22,11 +22,6 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	var userForm entities.UserForm
 	err := json.NewDecoder(r.Body).Decode(&userForm)
-	// Ler o corpo da requisição e decodificar os dados do novo usuário
-	//var user entities.User
-	//user, err := parseUser(r)
-	log.Printf(userForm.Password)
-	log.Printf(userForm.ConfirmPassword)
 
 	if userForm.Password != userForm.ConfirmPassword {
 		utils.SendError(w, "As senhas nao sao iguais", 401)
@@ -37,8 +32,6 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		utils.SendError(w, "Decode error", http.StatusBadRequest)
 		return
 	}
-
-	// Verificar se o usuário já existe (por exemplo, pelo email)
 
 	reader := dbConnection.GetReaderGorm()
 	existsEmail, err := UserExistsByEmail(reader, userForm.Email)
@@ -53,8 +46,6 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		utils.SendError(w, "This email is already registered", http.StatusConflict)
 		return
 	}
-
-	// Se não existir, criar um novo usuário no banco de dados
 
 	writer := dbConnection.GetWriterGorm()
 	errorToWrite := addUser(writer, userForm)

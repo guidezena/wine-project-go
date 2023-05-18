@@ -85,15 +85,12 @@ func GetRestaurantsHandler(w http.ResponseWriter, r *http.Request) {
 	dbConnection.CloseDbConnection(reader)
 
 	if err != nil {
-		// Trate o erro
 		http.Error(w, "Erro ao obter restaurantes", http.StatusInternalServerError)
 		return
 	}
 
-	// Enviar os restaurantes como resposta JSON
 	jsonRestaurants, err := json.Marshal(restaurants)
 	if err != nil {
-		// Trate o erro
 		http.Error(w, "Erro ao converter restaurantes para JSON", http.StatusInternalServerError)
 		return
 	}

@@ -79,7 +79,6 @@ func createDish(db *gorm.DB, dish entities.Dish) error {
 func GetDishesHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request GetDishes")
 
-	// Obtenha os parâmetros da solicitação POST
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, "Erro ao analisar os parâmetros da solicitação", http.StatusBadRequest)
@@ -87,13 +86,12 @@ func GetDishesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	reader := dbConnection.GetReaderGorm()
 
-	// Verifique os parâmetros fornecidos
 	idRestaurant := r.Form.Get("restaurant_id")
 	idCategoria := r.Form.Get("category_id")
 
-	// Realize a busca com base nos parâmetros fornecidos
 	var dishes []entities.Dish
 	query := reader
+
 	if idRestaurant != "" {
 		log.Printf("Buscando restaurant_id")
 		query = query.Where("restaurant_id = ?", idRestaurant)
@@ -102,6 +100,7 @@ func GetDishesHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Buscando category_id")
 		query = query.Where("category_id = ?", idCategoria)
 	}
+	
 	err = query.Find(&dishes).Error
 
 	dbConnection.CloseDbConnection(query)

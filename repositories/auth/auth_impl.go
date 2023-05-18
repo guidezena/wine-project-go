@@ -34,13 +34,6 @@ func Authenticate(email string, password string) (*entities.User, error) {
 
 	user, err := register.GetUser(email)
 
-	// Comparar a senha hash armazenada com a senha fornecida pelo usuário
-	log.Printf(user.Email)
-	log.Printf(user.Password)
-
-	log.Printf(email)
-	log.Printf(password)
-
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
 		if err == bcrypt.ErrMismatchedHashAndPassword {

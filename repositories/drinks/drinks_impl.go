@@ -18,8 +18,6 @@ func AddDrinkHandler(w http.ResponseWriter, r *http.Request) {
 	var drink entities.Drink
 	err := json.NewDecoder(r.Body).Decode(&drink)
 
-	log.Printf(drink.Name)
-
 	if err != nil {
 		utils.SendError(w, "Decode error", http.StatusBadRequest)
 		return
@@ -82,15 +80,12 @@ func GetDrinksHandler(w http.ResponseWriter, r *http.Request) {
 	dbConnection.CloseDbConnection(reader)
 
 	if err != nil {
-		// Trate o erro
 		http.Error(w, "Erro ao obter drinks", http.StatusInternalServerError)
 		return
 	}
 
-	// Enviar as categorias como resposta JSON
 	jsonDrinks, err := json.Marshal(drinks)
 	if err != nil {
-		// Trate o erro
 		http.Error(w, "Erro ao converter drinks para JSON", http.StatusInternalServerError)
 		return
 	}

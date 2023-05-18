@@ -81,15 +81,12 @@ func GetCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	dbConnection.CloseDbConnection(reader)
 
 	if err != nil {
-		// Trate o erro
 		http.Error(w, "Erro ao obter categorias", http.StatusInternalServerError)
 		return
 	}
 
-	// Enviar as categorias como resposta JSON
 	jsonCategories, err := json.Marshal(categories)
 	if err != nil {
-		// Trate o erro
 		http.Error(w, "Erro ao converter categorias para JSON", http.StatusInternalServerError)
 		return
 	}

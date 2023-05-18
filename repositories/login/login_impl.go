@@ -19,9 +19,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf(creds.Email)
-	log.Printf(creds.Password)
-
 	user, err := auth.Authenticate(creds.Email, creds.Password)
 
 	if err != nil {
