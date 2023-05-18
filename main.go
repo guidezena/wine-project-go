@@ -36,10 +36,10 @@ func main() {
 	router.HandleFunc("/users/{id}", users.DeleteUserHandler).Methods("DELETE")
 	router.HandleFunc("/users/{id}", users.UpdateUserHandler).Methods("PUT")
 
-	router.HandleFunc("/category", categories.GetCategories).Methods("GET")
-	router.HandleFunc("/category", categories.AddCategory).Methods("POST")
-	//router.HandleFunc("/category", categories.AddCategory).Methods("DELETE")
-	//router.HandleFunc("/category", categories.AddCategory).Methods("PUT")
+	router.HandleFunc("/categories", categories.GetCategoriesHandler).Methods("GET")
+	router.HandleFunc("/categories", categories.AddCategoryHandler).Methods("POST")
+	router.HandleFunc("/categories/{id}", categories.DeleteCategoryHandler).Methods("DELETE")
+	router.HandleFunc("/categories/{id}", categories.UpdateCategoryHandler).Methods("PUT")
 
 	router.HandleFunc("/restaurant", restaurants.AddRestaurant).Methods("POST")
 	router.HandleFunc("/restaurant", restaurants.GetRestaurants).Methods("GET")

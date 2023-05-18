@@ -8,10 +8,11 @@ import (
 	"wine-project-go/entities"
 	"wine-project-go/utils"
 
+	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
 
-func AddCategory(w http.ResponseWriter, r *http.Request) {
+func AddCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request AddCategory")
 
 	var category entities.Category
@@ -72,7 +73,7 @@ func createCategory(db *gorm.DB, category entities.Category) error {
 	return nil
 }
 
-func GetCategories(w http.ResponseWriter, r *http.Request) {
+func GetCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request GetCategories")
 
 	reader := dbConnection.GetReaderGorm()
@@ -104,4 +105,104 @@ func getCategories(db *gorm.DB) ([]entities.Category, error) {
 		return nil, err
 	}
 	return categories, nil
+}
+
+func DeleteCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Receiving request DeleteCategoryHandler")
+
+	categoryID := mux.Vars(r)["id"]
+
+	writer := dbConnection.GetWriterGorm()
+	errorToDelete := deleteCategory(writer, categoryID)
+	dbConnection.CloseDbConnection(writer)
+
+	if errorToDelete != nil {
+		utils.SendError(w, errorToDelete.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]string{
+		"message": "Categoria excluída com sucesso!",
+	}
+
+	response, err := json.Marshal(data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+	log.Printf("Categoria excluída com sucesso!")
+}
+
+func deleteCategory(db *gorm.DB, categoryID string) error {
+	log.Printf("deleteCategory")
+
+	result := db.Delete(&entities.Category{}, categoryID)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return &entities.CustomError{Message: "Nenhuma linha foi afetada"}
+	}
+
+	return nil
+}
+
+func UpdateCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Receiving request UpdateCategoryHandler")
+
+	categoryID := mux.Vars(r)["id"]
+
+	var updatedCategory entities.Category
+	err := json.NewDecoder(r.Body).Decode(&updatedCategory)
+
+	if err != nil {
+		utils.SendError(w, "Decode error", http.StatusBadRequest)
+		return
+	}
+
+	writer := dbConnection.GetWriterGorm()
+	errorToUpdate := updateCategory(writer, categoryID, updatedCategory)
+	dbConnection.CloseDbConnection(writer)
+
+	if errorToUpdate != nil {
+		utils.SendError(w, errorToUpdate.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]string{
+		"message": "Categoria atualizada com sucesso!",
+	}
+
+	response, err := json.Marshal(data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+	log.Printf("Categoria atualizada com sucesso!")
+}
+
+func updateCategory(db *gorm.DB, categoryID string, updatedCategory entities.Category) error {
+	log.Printf("updateCategory")
+
+	result := db.Model(&entities.User{}).Where("ID = ?", categoryID).Updates(updatedCategory)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return &entities.CustomError{Message: "Nenhuma linha foi afetada"}
+	}
+
+	return nil
 }
