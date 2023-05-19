@@ -153,7 +153,8 @@ func GetDishHandler(w http.ResponseWriter, r *http.Request) {
 func getDish(db *gorm.DB, dishID string) error {
 	log.Printf("getDish")
 
-	result := db.Find(&entities.Dish{}, dishID)
+	var dish entities.Dish
+	result := db.First(&dish, dishID)
 
 	if result.Error != nil {
 		return result.Error
