@@ -48,6 +48,7 @@ func main() {
 
 	router.HandleFunc("/dishes", dishes.AddDishHandler).Methods("POST")
 	router.HandleFunc("/dishes", dishes.GetDishesHandler).Methods("GET")
+	router.HandleFunc("/dishes/{id}", dishes.GetDishHandler).Methods("GET")
 	router.HandleFunc("/dishes/{id}", dishes.DeleteDishHandler).Methods("DELETE")
 	router.HandleFunc("/dishes/{id}", dishes.UpdateDishHandler).Methods("PUT")
 

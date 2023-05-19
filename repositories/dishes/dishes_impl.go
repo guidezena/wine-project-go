@@ -100,7 +100,7 @@ func GetDishesHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Buscando category_id")
 		query = query.Where("category_id = ?", idCategoria)
 	}
-	
+
 	err = query.Find(&dishes).Error
 
 	dbConnection.CloseDbConnection(query)
@@ -118,6 +118,52 @@ func GetDishesHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonDishes)
+}
+
+func GetDishHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Receiving request GetDishHandler")
+
+	dishID := mux.Vars(r)["id"]
+
+	reader := dbConnection.GetReaderGorm()
+	errorToDelete := getDish(reader, dishID)
+	dbConnection.CloseDbConnection(reader)
+
+	if errorToDelete != nil {
+		utils.SendError(w, errorToDelete.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]string{
+		"message": "sucesso!",
+	}
+
+	response, err := json.Marshal(data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+	log.Printf("sucesso!")
+}
+
+func getDish(db *gorm.DB, dishID string) error {
+	log.Printf("getDish")
+
+	result := db.Find(&entities.Dish{}, dishID)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return &entities.CustomError{Message: "Nenhuma linha foi afetada"}
+	}
+
+	return nil
 }
 
 func DeleteDishHandler(w http.ResponseWriter, r *http.Request) {
