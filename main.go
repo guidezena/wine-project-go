@@ -7,6 +7,7 @@ import (
 	"wine-project-go/repositories/dishes"
 	"wine-project-go/repositories/drinks"
 	"wine-project-go/repositories/restaurants"
+	"wine-project-go/repositories/suggestions"
 	"wine-project-go/repositories/users"
 
 	"wine-project-go/repositories/login"
@@ -56,6 +57,10 @@ func main() {
 	router.HandleFunc("/drinks", drinks.GetDrinksHandler).Methods("GET")
 	router.HandleFunc("/drinks/{id}", drinks.DeleteDrinkHandler).Methods("DELETE")
 	router.HandleFunc("/drinks/{id}", drinks.UpdateDrinkHandler).Methods("PUT")
+
+	router.HandleFunc("/drinksuggestions", suggestions.AddDrinkSuggestionHandler).Methods("POST")
+	router.HandleFunc("/drinksuggestions/{dishID}", suggestions.GetDrinkSuggestionsHandler).Methods("GET")
+	router.HandleFunc("/drinksuggestions/{dishID}/{drinkID}", suggestions.DeleteDrinkSuggestionHandler).Methods("DELETE")
 
 	handler := handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders)(router)
 	http.ListenAndServe(":"+port, handler)
