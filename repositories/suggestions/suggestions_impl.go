@@ -23,6 +23,20 @@ func AddDrinkSuggestionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	reader := dbConnection.GetReaderGorm()
+	existsDrinkSuggestion, err := DrinkExistsForDish(reader, drinkSuggestion.DishID, drinkSuggestion.DrinkID)
+	dbConnection.CloseDbConnection(reader)
+
+	if err != nil {
+		utils.SendError(w, "Error to validate if the registered email already exists", http.StatusBadRequest)
+		return
+	}
+
+	if existsDrinkSuggestion {
+		utils.SendError(w, "This drink is already registered", http.StatusConflict)
+		return
+	}
+
 	writer := dbConnection.GetWriterGorm()
 	errorToWrite := createDrinkSuggestion(writer, drinkSuggestion)
 	dbConnection.CloseDbConnection(writer)
@@ -69,6 +83,18 @@ func createDrinkSuggestion(db *gorm.DB, drinkSuggestion entities.DrinkSuggestion
 	}
 
 	return nil
+}
+
+func DrinkExistsForDish(db *gorm.DB, dishID int, drinkID int) (bool, error) {
+	var count int64
+	err := db.Model(&entities.DrinkSuggestion{}).Where("dish_id = ? AND drink_id = ?", dishID, drinkID).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	if count > 0 {
+		return true, nil
+	}
+	return false, nil
 }
 
 func GetDrinkSuggestionsHandler(w http.ResponseWriter, r *http.Request) {
