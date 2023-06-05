@@ -104,6 +104,47 @@ func getCategories(db *gorm.DB) ([]entities.Category, error) {
 	return categories, nil
 }
 
+func GetCategoriesForIdHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Receiving request GetCategoriesForIdHandler")
+
+	categoryID := mux.Vars(r)["id"]
+
+	reader := dbConnection.GetReaderGorm()
+	categories, err := getCategoriesForId(reader, categoryID)
+	dbConnection.CloseDbConnection(reader)
+
+	if err != nil {
+		http.Error(w, "Erro ao obter categorias", http.StatusInternalServerError)
+		return
+	}
+
+	jsonCategories, err := json.Marshal(categories)
+	if err != nil {
+		http.Error(w, "Erro ao converter categorias para JSON", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonCategories)
+}
+
+func getCategoriesForId(db *gorm.DB, categoryId string) (*entities.Restaurant, error) {
+
+	var category entities.Restaurant
+	result := db.First(&category, categoryId)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return nil, &entities.CustomError{Message: "Nenhuma linha foi afetada"}
+	}
+
+	return &category, nil
+
+}
+
 func DeleteCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request DeleteCategoryHandler")
 

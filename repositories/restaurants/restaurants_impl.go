@@ -108,6 +108,47 @@ func getRestaurants(db *gorm.DB) ([]entities.Restaurant, error) {
 	return restaurants, nil
 }
 
+func GetRestaurantsForIdHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Receiving request GetRestaurantsHandler")
+
+	restaurantID := mux.Vars(r)["id"]
+
+	reader := dbConnection.GetReaderGorm()
+	restaurants, err := getRestaurantsForId(reader, restaurantID)
+	dbConnection.CloseDbConnection(reader)
+
+	if err != nil {
+		http.Error(w, "Erro ao obter restaurantes", http.StatusInternalServerError)
+		return
+	}
+
+	jsonRestaurants, err := json.Marshal(restaurants)
+	if err != nil {
+		http.Error(w, "Erro ao converter restaurantes para JSON", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonRestaurants)
+}
+
+func getRestaurantsForId(db *gorm.DB, restaurantId string) (*entities.Restaurant, error) {
+
+	var restaurant entities.Restaurant
+	result := db.First(&restaurant, restaurantId)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return nil, &entities.CustomError{Message: "Nenhuma linha foi afetada"}
+	}
+
+	return &restaurant, nil
+
+}
+
 func DeleteRestaurantHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request DeleteRestaurantHandler")
 
