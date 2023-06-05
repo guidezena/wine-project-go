@@ -128,9 +128,9 @@ func GetCategoriesForIdHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonCategories)
 }
 
-func getCategoriesForId(db *gorm.DB, categoryId string) (*entities.Restaurant, error) {
+func getCategoriesForId(db *gorm.DB, categoryId string) (*entities.Category, error) {
 
-	var category entities.Restaurant
+	var category entities.Category
 	result := db.First(&category, categoryId)
 
 	if result.Error != nil {
