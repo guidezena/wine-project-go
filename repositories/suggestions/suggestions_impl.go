@@ -129,6 +129,43 @@ func GetDrinkSuggestionsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonDrinkSuggestions)
 }
 
+func GetDrinkSuggestionsAdminHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Receiving request GetDrinkSuggestionsAdminHandler")
+
+	dishID := mux.Vars(r)["dishID"]
+
+	reader := dbConnection.GetReaderGorm()
+	drinkSuggestions, err := getAllDrinkSuggestionsForId(reader, dishID)
+	dbConnection.CloseDbConnection(reader)
+
+	if err != nil {
+		utils.SendError(w, "Erro ao obter drink suggestions", http.StatusInternalServerError)
+		return
+	}
+
+	jsonDrinkSuggestions, err := json.Marshal(drinkSuggestions)
+	if err != nil {
+		http.Error(w, "Erro ao converter drink suggestions para JSON", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonDrinkSuggestions)
+}
+
+func getAllDrinkSuggestionsForId(db *gorm.DB, dishID string) ([]entities.DrinkSuggestion, error) {
+	var drinkSuggestions []entities.DrinkSuggestion
+
+	query := db.Where("dish_id = ?", dishID)
+
+	err := query.Preload("Drink").Find(&drinkSuggestions).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return drinkSuggestions, nil
+}
+
 func getDrinkSuggestions(db *gorm.DB, dishID string, isPremium bool) ([]entities.DrinkSuggestion, error) {
 	var drinkSuggestions []entities.DrinkSuggestion
 

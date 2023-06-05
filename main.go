@@ -62,6 +62,9 @@ func main() {
 	router.HandleFunc("/drinksuggestions/{dishID}", suggestions.GetDrinkSuggestionsHandler).Methods("GET")
 	router.HandleFunc("/drinksuggestions/{dishID}/{drinkID}", suggestions.DeleteDrinkSuggestionHandler).Methods("DELETE")
 
+	router.HandleFunc("/drinksuggestions-admin/{dishID}", suggestions.GetDrinkSuggestionsAdminHandler).Methods("GET")
+
+
 	handler := handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders)(router)
 	http.ListenAndServe(":"+port, handler)
 }
