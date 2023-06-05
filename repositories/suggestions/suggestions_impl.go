@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"wine-project-go/dbConnection"
 	"wine-project-go/entities"
 	"wine-project-go/utils"
@@ -101,9 +102,13 @@ func GetDrinkSuggestionsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request GetDrinkSuggestions")
 
 	dishID := mux.Vars(r)["dishID"]
+	isPremiumStr := r.Header.Get("is_premium")
 
-	// Verifique se o usuário é premium
-	isPremium := true // Defina essa variável de acordo com a lógica do seu aplicativo
+	isPremium, err := strconv.ParseBool(isPremiumStr)
+	if err != nil {
+		http.Error(w, "Invalid is_premium value", http.StatusBadRequest)
+		return
+	}
 
 	reader := dbConnection.GetReaderGorm()
 	drinkSuggestions, err := getDrinkSuggestions(reader, dishID, isPremium)
