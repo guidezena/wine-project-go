@@ -102,7 +102,7 @@ func GetDrinkSuggestionsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request GetDrinkSuggestions")
 
 	dishID := mux.Vars(r)["dishID"]
-	isPremiumStr := r.Header.Get("is_premium")
+	isPremiumStr := r.Header.Get("Is-Premium")
 
 	isPremium, err := strconv.ParseBool(isPremiumStr)
 	if err != nil {
