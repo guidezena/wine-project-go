@@ -26,7 +26,7 @@ func main() {
 
 	allowedOrigins := handlers.AllowedOrigins([]string{"*"})
 	allowedMethods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"})
-	allowedHeaders := handlers.AllowedHeaders([]string{"Content-Type", "Authorization", "is_premium"})
+	allowedHeaders := handlers.AllowedHeaders([]string{"Content-Type", "Authorization", "Is-Premium"})
 
 	router := mux.NewRouter()
 
