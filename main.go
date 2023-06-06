@@ -57,6 +57,7 @@ func main() {
 
 	router.HandleFunc("/drinks", drinks.AddDrinkHandler).Methods("POST")
 	router.HandleFunc("/drinks", drinks.GetDrinksHandler).Methods("GET")
+	router.HandleFunc("/drinks/{id}", drinks.GetDrinksForIdHandler).Methods("GET")
 	router.HandleFunc("/drinks/{id}", drinks.DeleteDrinkHandler).Methods("DELETE")
 	router.HandleFunc("/drinks/{id}", drinks.UpdateDrinkHandler).Methods("PUT")
 

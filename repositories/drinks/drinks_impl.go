@@ -103,6 +103,47 @@ func getDrinks(db *gorm.DB) ([]entities.Drink, error) {
 	return drinks, nil
 }
 
+func GetDrinksForIdHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Receiving request GetDrinksForIdHandler")
+
+	drinkID := mux.Vars(r)["id"]
+
+	reader := dbConnection.GetReaderGorm()
+	drink, err := getDrinksForId(reader, drinkID)
+	dbConnection.CloseDbConnection(reader)
+
+	if err != nil {
+		http.Error(w, "Erro ao obter drink", http.StatusInternalServerError)
+		return
+	}
+
+	jsonRestaurants, err := json.Marshal(drink)
+	if err != nil {
+		http.Error(w, "Erro ao converter drink para JSON", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonRestaurants)
+}
+
+func getDrinksForId(db *gorm.DB, drinkId string) (*entities.Drink, error) {
+
+	var drink entities.Drink
+	result := db.First(&drink, drinkId)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return nil, &entities.CustomError{Message: "Nenhuma linha foi afetada"}
+	}
+
+	return &drink, nil
+
+}
+
 func DeleteDrinkHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Receiving request DeleteDrinkHandler")
 
